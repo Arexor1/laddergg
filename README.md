@@ -39,23 +39,25 @@ Anschließend die Werte in `.env` eintragen (mindestens `DISCORD_TOKEN`, `RIOT_A
 
 ## Betrieb als systemd-Dienst
 
-Beispiel für `/etc/systemd/system/laddergg.service`:
+Konfiguration in `/etc/systemd/system/laddergg.service`:
 
 ```ini
 [Unit]
 Description=LadderGG Discord Bot
-After=network.target postgresql.service
+After=network-online.target postgresql.service
+Wants=network-online.target
 
 [Service]
+Type=simple
 User=ubuntu
 WorkingDirectory=/home/ubuntu/ladderbot
-ExecStart=/home/ubuntu/ladderbot/venv/bin/python bot.py
+ExecStart=/home/ubuntu/ladderbot/venv/bin/python /home/ubuntu/ladderbot/bot.py
 Restart=always
-RestartSec=10
+RestartSec=5
 
 [Install]
 WantedBy=multi-user.target
-```
+````
 
 Wichtige Befehle:
 
@@ -78,7 +80,8 @@ Zur Wiederherstellung dient `restore_db.sh`. Die Backups liegen in `backups/` un
 
 ## Weitere Skripte
 
-- `migrate_puuids.py` – Hilfsskript zur Aktualisierung gespeicherter Riot-PUUIDs, z. B. nach einem Wechsel des API-Keys
+- `migrate_puuids.py` – Datenmigration nach einem Wechsel des Riot-API-Keys: Riot verschlüsselt PUUIDs pro Key, daher holt das Skript für alle registrierten Accounts neue PUUIDs und ersetzt sie in allen betroffenen Tabellen. Idempotent, kann also gefahrlos mehrfach ausgeführt werden.
+  Aufruf: `./venv/bin/python migrate_puuids.py`
 
 ## Update-Ablauf
 
