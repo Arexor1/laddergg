@@ -1,0 +1,22 @@
+# --- Geheimnisse ---
+.env
+.env.*
+!.env.example
+google_credentials.json
+*credentials*.json
+
+# --- Datenbank-Backups und Logs ---
+backups/
+*.sql
+*.sql.gz
+*.log
+
+# --- Python ---
+venv/
+__pycache__/
+*.pyc
+
+# --- Alte Versionen und Testskripte ---
+LadderGG*.py
+bot_backup*.py
+test_*.py
